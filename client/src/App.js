@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useLayoutEffect } from 'react'
 import { Formik, Form, Field } from 'formik'
 import { useSelector, useDispatch } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -11,14 +11,23 @@ function App () {
     ChatActionCreators,
     dispatch
   )
-
+  useLayoutEffect(() => {
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: 'smooth'
+    })
+  })
   useEffect(() => {
     getMessagesRequest()
   }, [])
 
   return (
     <div>
-      <ul>
+      <ul
+        style={{
+          paddingBottom: '50px'
+        }}
+      >
         {isFetching && <li>Messages are loading</li>}
         {messages.map(msg => (
           <li key={msg._id}>{JSON.stringify(msg)}</li>
@@ -27,14 +36,19 @@ function App () {
       <Formik
         onSubmit={(values, formikBag) => {
           createMessageRequest(values)
-          formikBag.setFieldValue('text', '')
+          //formikBag.setFieldValue('text', '')
         }}
         initialValues={{
           name: '',
           text: ''
         }}
       >
-        <Form>
+        <Form
+          style={{
+            position: 'fixed',
+            bottom: 0
+          }}
+        >
           <Field name='name' placeholder='name' />
           <Field name='text' placeholder='text' />
           <button type='submit'>Send message</button>
